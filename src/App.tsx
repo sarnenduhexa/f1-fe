@@ -1,8 +1,6 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
 import './App.css'
 import { Routes, Route } from 'react-router-dom'
+import SeasonListPage from './pages/SeasonListPage'
 
 function App() {
   return (
@@ -13,12 +11,6 @@ function App() {
       </Routes>
     </div>
   )
-}
-
-function SeasonListPage() {
-  return (
-    <h1 className="text-3xl font-bold text-blue-600 dark:text-yellow-400">Season List Page (placeholder)</h1>
-  );
 }
 
 function SeasonDetailsPage() {

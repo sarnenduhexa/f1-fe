@@ -20,18 +20,14 @@ import type {
   UseQueryResult
 } from '@tanstack/react-query';
 
-import * as axios from 'axios';
-import type {
-  AxiosError,
-  AxiosRequestConfig,
-  AxiosResponse
-} from 'axios';
-
 import type {
   SeasonDto
 } from '../f1DashboardAPI.schemas';
 
+import customInstance from '.././customAxios';
 
+
+type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1];
 
 
 
@@ -39,31 +35,33 @@ import type {
  * @summary Get all F1 seasons
  */
 export const seasonsControllerFindAll = (
-     options?: AxiosRequestConfig
- ): Promise<AxiosResponse<SeasonDto[]>> => {
     
-    
-    return axios.default.get(
-      `/seasons`,options
-    );
-  }
-
+ options?: SecondParameter<typeof customInstance>,signal?: AbortSignal
+) => {
+      
+      
+      return customInstance<SeasonDto[]>(
+      {url: `/seasons`, method: 'GET', signal
+    },
+      options);
+    }
+  
 
 export const getSeasonsControllerFindAllQueryKey = () => {
     return [`/seasons`] as const;
     }
 
     
-export const getSeasonsControllerFindAllQueryOptions = <TData = Awaited<ReturnType<typeof seasonsControllerFindAll>>, TError = AxiosError<unknown>>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof seasonsControllerFindAll>>, TError, TData>>, axios?: AxiosRequestConfig}
+export const getSeasonsControllerFindAllQueryOptions = <TData = Awaited<ReturnType<typeof seasonsControllerFindAll>>, TError = unknown>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof seasonsControllerFindAll>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
 ) => {
 
-const {query: queryOptions, axios: axiosOptions} = options ?? {};
+const {query: queryOptions, request: requestOptions} = options ?? {};
 
   const queryKey =  queryOptions?.queryKey ?? getSeasonsControllerFindAllQueryKey();
 
   
 
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof seasonsControllerFindAll>>> = ({ signal }) => seasonsControllerFindAll({ signal, ...axiosOptions });
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof seasonsControllerFindAll>>> = ({ signal }) => seasonsControllerFindAll(requestOptions, signal);
 
       
 
@@ -73,39 +71,39 @@ const {query: queryOptions, axios: axiosOptions} = options ?? {};
 }
 
 export type SeasonsControllerFindAllQueryResult = NonNullable<Awaited<ReturnType<typeof seasonsControllerFindAll>>>
-export type SeasonsControllerFindAllQueryError = AxiosError<unknown>
+export type SeasonsControllerFindAllQueryError = unknown
 
 
-export function useSeasonsControllerFindAll<TData = Awaited<ReturnType<typeof seasonsControllerFindAll>>, TError = AxiosError<unknown>>(
+export function useSeasonsControllerFindAll<TData = Awaited<ReturnType<typeof seasonsControllerFindAll>>, TError = unknown>(
   options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof seasonsControllerFindAll>>, TError, TData>> & Pick<
         DefinedInitialDataOptions<
           Awaited<ReturnType<typeof seasonsControllerFindAll>>,
           TError,
           Awaited<ReturnType<typeof seasonsControllerFindAll>>
         > , 'initialData'
-      >, axios?: AxiosRequestConfig}
+      >, request?: SecondParameter<typeof customInstance>}
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useSeasonsControllerFindAll<TData = Awaited<ReturnType<typeof seasonsControllerFindAll>>, TError = AxiosError<unknown>>(
+export function useSeasonsControllerFindAll<TData = Awaited<ReturnType<typeof seasonsControllerFindAll>>, TError = unknown>(
   options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof seasonsControllerFindAll>>, TError, TData>> & Pick<
         UndefinedInitialDataOptions<
           Awaited<ReturnType<typeof seasonsControllerFindAll>>,
           TError,
           Awaited<ReturnType<typeof seasonsControllerFindAll>>
         > , 'initialData'
-      >, axios?: AxiosRequestConfig}
+      >, request?: SecondParameter<typeof customInstance>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useSeasonsControllerFindAll<TData = Awaited<ReturnType<typeof seasonsControllerFindAll>>, TError = AxiosError<unknown>>(
-  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof seasonsControllerFindAll>>, TError, TData>>, axios?: AxiosRequestConfig}
+export function useSeasonsControllerFindAll<TData = Awaited<ReturnType<typeof seasonsControllerFindAll>>, TError = unknown>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof seasonsControllerFindAll>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 /**
  * @summary Get all F1 seasons
  */
 
-export function useSeasonsControllerFindAll<TData = Awaited<ReturnType<typeof seasonsControllerFindAll>>, TError = AxiosError<unknown>>(
-  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof seasonsControllerFindAll>>, TError, TData>>, axios?: AxiosRequestConfig}
+export function useSeasonsControllerFindAll<TData = Awaited<ReturnType<typeof seasonsControllerFindAll>>, TError = unknown>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof seasonsControllerFindAll>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
  , queryClient?: QueryClient 
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
@@ -124,31 +122,33 @@ export function useSeasonsControllerFindAll<TData = Awaited<ReturnType<typeof se
  * @summary Get a specific F1 season by year
  */
 export const seasonsControllerFindOne = (
-    year: number, options?: AxiosRequestConfig
- ): Promise<AxiosResponse<SeasonDto>> => {
-    
-    
-    return axios.default.get(
-      `/seasons/${year}`,options
-    );
-  }
-
+    year: number,
+ options?: SecondParameter<typeof customInstance>,signal?: AbortSignal
+) => {
+      
+      
+      return customInstance<SeasonDto>(
+      {url: `/seasons/${year}`, method: 'GET', signal
+    },
+      options);
+    }
+  
 
 export const getSeasonsControllerFindOneQueryKey = (year: number,) => {
     return [`/seasons/${year}`] as const;
     }
 
     
-export const getSeasonsControllerFindOneQueryOptions = <TData = Awaited<ReturnType<typeof seasonsControllerFindOne>>, TError = AxiosError<void>>(year: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof seasonsControllerFindOne>>, TError, TData>>, axios?: AxiosRequestConfig}
+export const getSeasonsControllerFindOneQueryOptions = <TData = Awaited<ReturnType<typeof seasonsControllerFindOne>>, TError = void>(year: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof seasonsControllerFindOne>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
 ) => {
 
-const {query: queryOptions, axios: axiosOptions} = options ?? {};
+const {query: queryOptions, request: requestOptions} = options ?? {};
 
   const queryKey =  queryOptions?.queryKey ?? getSeasonsControllerFindOneQueryKey(year);
 
   
 
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof seasonsControllerFindOne>>> = ({ signal }) => seasonsControllerFindOne(year, { signal, ...axiosOptions });
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof seasonsControllerFindOne>>> = ({ signal }) => seasonsControllerFindOne(year, requestOptions, signal);
 
       
 
@@ -158,39 +158,39 @@ const {query: queryOptions, axios: axiosOptions} = options ?? {};
 }
 
 export type SeasonsControllerFindOneQueryResult = NonNullable<Awaited<ReturnType<typeof seasonsControllerFindOne>>>
-export type SeasonsControllerFindOneQueryError = AxiosError<void>
+export type SeasonsControllerFindOneQueryError = void
 
 
-export function useSeasonsControllerFindOne<TData = Awaited<ReturnType<typeof seasonsControllerFindOne>>, TError = AxiosError<void>>(
+export function useSeasonsControllerFindOne<TData = Awaited<ReturnType<typeof seasonsControllerFindOne>>, TError = void>(
  year: number, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof seasonsControllerFindOne>>, TError, TData>> & Pick<
         DefinedInitialDataOptions<
           Awaited<ReturnType<typeof seasonsControllerFindOne>>,
           TError,
           Awaited<ReturnType<typeof seasonsControllerFindOne>>
         > , 'initialData'
-      >, axios?: AxiosRequestConfig}
+      >, request?: SecondParameter<typeof customInstance>}
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useSeasonsControllerFindOne<TData = Awaited<ReturnType<typeof seasonsControllerFindOne>>, TError = AxiosError<void>>(
+export function useSeasonsControllerFindOne<TData = Awaited<ReturnType<typeof seasonsControllerFindOne>>, TError = void>(
  year: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof seasonsControllerFindOne>>, TError, TData>> & Pick<
         UndefinedInitialDataOptions<
           Awaited<ReturnType<typeof seasonsControllerFindOne>>,
           TError,
           Awaited<ReturnType<typeof seasonsControllerFindOne>>
         > , 'initialData'
-      >, axios?: AxiosRequestConfig}
+      >, request?: SecondParameter<typeof customInstance>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useSeasonsControllerFindOne<TData = Awaited<ReturnType<typeof seasonsControllerFindOne>>, TError = AxiosError<void>>(
- year: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof seasonsControllerFindOne>>, TError, TData>>, axios?: AxiosRequestConfig}
+export function useSeasonsControllerFindOne<TData = Awaited<ReturnType<typeof seasonsControllerFindOne>>, TError = void>(
+ year: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof seasonsControllerFindOne>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 /**
  * @summary Get a specific F1 season by year
  */
 
-export function useSeasonsControllerFindOne<TData = Awaited<ReturnType<typeof seasonsControllerFindOne>>, TError = AxiosError<void>>(
- year: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof seasonsControllerFindOne>>, TError, TData>>, axios?: AxiosRequestConfig}
+export function useSeasonsControllerFindOne<TData = Awaited<ReturnType<typeof seasonsControllerFindOne>>, TError = void>(
+ year: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof seasonsControllerFindOne>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
  , queryClient?: QueryClient 
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
