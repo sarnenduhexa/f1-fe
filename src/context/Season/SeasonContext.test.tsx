@@ -16,16 +16,16 @@ const TestComponent = () => {
 };
 
 describe('SeasonContext', () => {
-  it('provides and updates selected season', async () => {
+  it('provides and updates selected season', () => {
     render(
       <SeasonProvider>
         <TestComponent />
       </SeasonProvider>
     );
     expect(screen.getByTestId('selected-season')).toHaveTextContent('none');
-    
-    await act(async () => {
-        await screen.getByText('Set Season').click();
+
+    act(() => {
+        screen.getByText('Set Season').click();
     });
     
     expect(screen.getByTestId('selected-season')).toHaveTextContent('2022');
