@@ -6,6 +6,12 @@ on:
   pull_request:
     branches: [ main ]
 
+# Add permissions block for CodeQL
+permissions:
+  security-events: write
+  actions: read
+  contents: read
+
 env:
   DOCKER_IMAGE: sarnenduhexa/f1-fe
   DOCKER_TAG: ${{ github.sha }}
@@ -21,12 +27,13 @@ jobs:
         uses: github/codeql-action/init@v3
         with:
           languages: javascript
+          tools: latest
           
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v3
         
       - name: Run Trivy vulnerability scanner
-        uses: aquasecurity/trivy-action@master
+        uses: aquasecurity/trivy-action@0.9.2
         with:
           image-ref: 'node:22'
           format: 'table'
@@ -84,7 +91,7 @@ jobs:
           tags: ${{ env.DOCKER_IMAGE }}:${{ env.DOCKER_TAG }},${{ env.DOCKER_IMAGE }}:latest
           
       - name: Run Trivy container scan
-        uses: aquasecurity/trivy-action@master
+        uses: aquasecurity/trivy-action@0.9.2
         with:
           image-ref: ${{ env.DOCKER_IMAGE }}:${{ env.DOCKER_TAG }}
           format: 'table'
