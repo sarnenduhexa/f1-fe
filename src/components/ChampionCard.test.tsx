@@ -1,9 +1,10 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import ChampionCard from './ChampionCard';
 import React from 'react';
-import { BrowserRouter } from 'react-router-dom';
+import { MemoryRouter } from 'react-router-dom';
 import type { SeasonDto } from '../api/f1DashboardAPI.schemas';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { SeasonProvider } from '../context/Season/SeasonProvidor';
 
 // Mock useNavigate at the module level
 const mockNavigate = vi.fn();
@@ -13,8 +14,12 @@ vi.mock('react-router-dom', async (importOriginal) => ({
 }));
 
 describe('ChampionCard', () => {
-  const renderWithRouter = (ui: React.ReactElement) =>
-    render(<BrowserRouter>{ui}</BrowserRouter>);
+  const renderWithProviders = (ui: React.ReactElement) =>
+    render(
+      <MemoryRouter>
+        <SeasonProvider>{ui}</SeasonProvider>
+      </MemoryRouter>
+    );
 
   beforeEach(() => {
     mockNavigate.mockClear();
@@ -33,7 +38,7 @@ describe('ChampionCard', () => {
         dateOfBirth: '1997-09-30',
       },
     };
-    renderWithRouter(<ChampionCard season={season} />);
+    renderWithProviders(<ChampionCard season={season} onSelect={() => {}} />);
     expect(screen.getByTestId('champion-year')).toHaveTextContent('2023');
     expect(screen.getByTestId('champion-name')).toHaveTextContent('Max Verstappen');
     expect(screen.getByTestId('champion-nationality')).toHaveTextContent('Dutch');
@@ -44,7 +49,7 @@ describe('ChampionCard', () => {
       year: 2022,
       url: '',
     };
-    renderWithRouter(<ChampionCard season={season} />);
+    renderWithProviders(<ChampionCard season={season} onSelect={() => {}} />);
     expect(screen.getByText('No winner data')).toBeInTheDocument();
   });
 
@@ -61,13 +66,13 @@ describe('ChampionCard', () => {
         dateOfBirth: '1985-01-07',
       },
     };
-    renderWithRouter(<ChampionCard season={season} />);
+    renderWithProviders(<ChampionCard season={season} onSelect={() => {}} />);
     const card = screen.getByRole('button');
     expect(card).toHaveAttribute('tabindex', '0');
     expect(card).toHaveAttribute('aria-label', expect.stringContaining('2021'));
   });
 
-  it('navigates on click', () => {
+  it('calls onSelect on click', () => {
     const season: SeasonDto = {
       year: 2020,
       url: '',
@@ -80,12 +85,13 @@ describe('ChampionCard', () => {
         dateOfBirth: '1987-07-03',
       },
     };
-    renderWithRouter(<ChampionCard season={season} />);
+    const onSelect = vi.fn();
+    renderWithProviders(<ChampionCard season={season} onSelect={onSelect} />);
     fireEvent.click(screen.getByRole('button'));
-    expect(mockNavigate).toHaveBeenCalledWith('/season/2020');
+    expect(onSelect).toHaveBeenCalled();
   });
 
-  it('navigates on Enter/Space keydown', () => {
+  it('calls onSelect on Enter/Space keydown', () => {
     const season: SeasonDto = {
       year: 2019,
       url: '',
@@ -98,12 +104,13 @@ describe('ChampionCard', () => {
         dateOfBirth: '1997-10-16',
       },
     };
-    renderWithRouter(<ChampionCard season={season} />);
+    const onSelect = vi.fn();
+    renderWithProviders(<ChampionCard season={season} onSelect={onSelect} />);
     const card = screen.getByRole('button');
     fireEvent.keyDown(card, { key: 'Enter' });
-    expect(mockNavigate).toHaveBeenCalledWith('/season/2019');
+    expect(onSelect).toHaveBeenCalled();
     fireEvent.keyDown(card, { key: ' ' });
-    expect(mockNavigate).toHaveBeenCalledWith('/season/2019');
+    expect(onSelect).toHaveBeenCalled();
   });
 
   it('handles edge-case winner data', () => {
@@ -119,8 +126,7 @@ describe('ChampionCard', () => {
         dateOfBirth: '',
       },
     };
-    renderWithRouter(<ChampionCard season={season} />);
-    //This works because internally toHaveTextContent ignores trailing whitespace
+    renderWithProviders(<ChampionCard season={season} onSelect={() => {}} />);
     expect(screen.getByTestId('champion-name')).toHaveTextContent('');
     expect(screen.getByTestId('champion-nationality')).toHaveTextContent('');
   });

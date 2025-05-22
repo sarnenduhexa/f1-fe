@@ -29,6 +29,8 @@ export interface SeasonDto {
   year: number;
   /** The URL to the season details */
   url: string;
+  /** The ID of the driver who won the season */
+  winnerDriverId?: string;
   /** The driver who won the season */
   winner?: DriverDto;
 }
@@ -50,5 +52,19 @@ export interface RaceDto {
   time?: string;
   /** URL to race details */
   url?: string;
+  /** ID of the winning driver */
+  winnerDriverId?: string;
+  /** ID of the winning constructor */
+  winnerConstructorId?: string;
+  /** Winning time */
+  winnerTime?: string;
+  /** Number of laps completed by winner */
+  winnerLaps?: number;
+  /** Starting grid position of winner */
+  winnerGrid?: number;
+  /** Points earned by winner */
+  winnerPoints?: number;
+  /** The driver who won the race */
+  winnerDriver?: DriverDto;
 }
 
