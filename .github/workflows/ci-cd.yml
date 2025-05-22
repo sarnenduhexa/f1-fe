@@ -67,7 +67,7 @@ jobs:
       - name: Build application
         run: npm run build
 
-  build-and-push:
+  docker:
     name: Build and Push Docker Image
     needs: [security, install-and-test]
     runs-on: ubuntu-latest
@@ -90,13 +90,23 @@ jobs:
           context: .
           push: true
           tags: ${{ env.DOCKER_IMAGE }}:${{ env.DOCKER_TAG }},${{ env.DOCKER_IMAGE }}:latest
-          
-      - name: Run Trivy container scan
-        uses: aquasecurity/trivy-action@0.9.2
-        with:
-          image-ref: ${{ env.DOCKER_IMAGE }}:${{ env.DOCKER_TAG }}
-          format: 'table'
-          exit-code: '1'
-          ignore-unfixed: true
-          vuln-type: 'os,library'
-          severity: 'CRITICAL,HIGH' 
+
+  trivy-container:
+    name: Container Vulnerability Scan
+    needs: docker
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Run Trivy vulnerability scanner
+      uses: aquasecurity/trivy-action@master
+      with:
+        image-ref: ${{ env.DOCKER_IMAGE }}:${{ env.DOCKER_TAG }}
+        format: 'table'
+        exit-code: '1'
+        ignore-unfixed: true
+        vuln-type: 'os,library'
+        severity: 'CRITICAL,HIGH'
