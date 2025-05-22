@@ -1,54 +1,133 @@
-# React + TypeScript + Vite
+# F1 Dashboard App (f1-fe)
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A modern, accessible, and responsive Formula 1 dashboard built with React, TypeScript, Vite, Tailwind CSS, and React Query. Displays F1 World Champions and race results, with a focus on best practices, testability, and easy deployment.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Features
+- List of F1 World Champions (2005–present)
+- Click a season to view all grand prix winners for that year
+- Champion's victories are visually highlighted
+- Accessible, responsive, and high Lighthouse score
+- API client auto-generated from OpenAPI (Swagger) spec
+- Modern state management with React Context and React Query
+- Full Docker support for local and production deployments
+- Comprehensive unit tests with Vitest and Testing Library
 
-## Expanding the ESLint configuration
+---
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## Tech Stack
+- **React** (TypeScript, Vite)
+- **Tailwind CSS** (utility-first styling)
+- **React Query** (data fetching/caching)
+- **Orval** (OpenAPI codegen)
+- **Axios** (API requests)
+- **Vitest** + **Testing Library** (unit/component testing)
+- **nginx** (production web server)
+- **Docker** & **Docker Compose** (multi-service orchestration)
 
-```js
-export default tseslint.config({
-  extends: [
-    // Remove ...tseslint.configs.recommended and replace with this
-    ...tseslint.configs.recommendedTypeChecked,
-    // Alternatively, use this for stricter rules
-    ...tseslint.configs.strictTypeChecked,
-    // Optionally, add this for stylistic rules
-    ...tseslint.configs.stylisticTypeChecked,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+---
+
+## Local Development
+
+1. **Install dependencies:**
+   ```sh
+   npm install
+   ```
+2. **Run the dev server:**
+   ```sh
+   npm run dev
+   ```
+   - The app will be available at [http://localhost:5173](http://localhost:5173)
+   - The dev server proxies `/api` requests to the backend (see `vite.config.ts`)
+
+3. **Run tests:**
+   ```sh
+   npm run test
+   ```
+
+4. **Generate API client from OpenAPI spec:**
+   ```sh
+   npm run generate:api
+   ```
+   - The OpenAPI spec should be available at `http://localhost:3001/api/` (or as configured)
+
+---
+
+## Docker & Production
+
+### **Build and Run with Docker Compose**
+
+1. **Ensure your `docker-compose.yml` includes:**
+   - `frontend` (this app)
+   - `backend` (API service)
+   - `postgres` (database)
+
+2. **Build and start all services:**
+   ```sh
+   docker-compose up --build
+   ```
+   - The frontend will be available at [http://localhost:5173](http://localhost:5173)
+   - The backend and database are networked for seamless API access
+
+3. **Environment Variables:**
+   - The frontend uses `VITE_API_BASE_URL` to communicate with the backend (set to `http://backend:3000` in Docker Compose)
+
+### **Build and Run the Frontend Independently with Docker**
+
+You can also build and run the frontend app as a standalone Docker container:
+
+1. **Build the Docker image:**
+   ```sh
+   docker build -t f1-fe .
+   ```
+2. **Run the container:**
+-e VITE_API_BASE_URL=http://localhost:3001 \
+   ```sh
+   docker run -d -p 5173:80 \
+     --name f1-fe f1-fe
+   ```
+   - Replace `http://localhost:3001` with your backend API URL as needed.
+   - The app will be available at [http://localhost:5173](http://localhost:5173)
+
+---
+
+## Project Structure
+```
+f1-fe/
+  src/
+    api/           # Orval-generated API client
+    components/    # Reusable UI components
+    context/       # React Context for state
+    hooks/         # Custom hooks
+    pages/         # App pages (SeasonList, SeasonDetails, etc.)
+    utils/         # Utility functions
+    index.css      # Tailwind import only
+    main.tsx       # App entry point
+    App.tsx        # App root
+  Dockerfile       # Multi-stage build for production
+  nginx.conf       # SPA routing for nginx
+  package.json     # Scripts and dependencies
+  vite.config.ts   # Vite and Vitest config
+  README.md        # This file
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+---
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+## Accessibility & Testing
+- Semantic HTML, ARIA, keyboard navigation
+- Responsive with Tailwind
+- Unit/component tests: `npm run test`
+- Test coverage for all major UI and data-fetching logic
 
-export default tseslint.config({
-  plugins: {
-    // Add the react-x and react-dom plugins
-    'react-x': reactX,
-    'react-dom': reactDom,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended typescript rules
-    ...reactX.configs['recommended-typescript'].rules,
-    ...reactDom.configs.recommended.rules,
-  },
-})
-```
+---
+
+## API Integration
+- API client is auto-generated from the backend OpenAPI spec using Orval
+- To update the client, run `npm run generate:api` after updating the backend spec
+- All API requests are routed through a custom Axios instance, using the correct base URL for each environment
+
+---
+
+## License
+MIT
