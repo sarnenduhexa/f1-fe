@@ -1,13 +1,12 @@
 import React from 'react';
 import type { SeasonDto } from '../api/f1DashboardAPI.schemas';
-import { useNavigate } from 'react-router-dom';
 
 interface ChampionCardProps {
   season: SeasonDto;
+  onSelect: () => void;
 }
 
-const ChampionCard: React.FC<ChampionCardProps> = ({ season }) => {
-  const navigate = useNavigate();
+const ChampionCard: React.FC<ChampionCardProps> = ({ season, onSelect }) => {
   const { year, winner } = season;
 
   return (
@@ -17,11 +16,9 @@ const ChampionCard: React.FC<ChampionCardProps> = ({ season }) => {
       tabIndex={0}
       role="button"
       aria-label={`View details for ${year} season`}
-      onClick={() => {
-        void navigate(`/season/${year}`);
-      }}
+      onClick={onSelect}
       onKeyDown={e => {
-        if (e.key === 'Enter' || e.key === ' ') void navigate(`/season/${year}`);
+        if (e.key === 'Enter' || e.key === ' ') onSelect();
       }}
     >
       <div className="flex flex-col sm:flex-row items-center gap-4">

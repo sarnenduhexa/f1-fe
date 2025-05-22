@@ -3,7 +3,9 @@ import SeasonListPage from "./SeasonListPage";
 import * as seasonsApi from "../api/seasons/seasons";
 import { vi, describe, it, afterEach, expect } from "vitest";
 import type { Mock } from "vitest";
+import React from "react";
 import { MemoryRouter } from "react-router-dom";
+import { SeasonProvider } from "../context/Season/SeasonProvidor";
 
 vi.mock("../api/seasons/seasons");
 
@@ -15,9 +17,16 @@ describe("SeasonListPage", () => {
     vi.clearAllMocks();
   });
 
+  const renderWithProviders = (ui: React.ReactElement) =>
+    render(
+      <MemoryRouter>
+        <SeasonProvider>{ui}</SeasonProvider>
+      </MemoryRouter>
+    );
+
   it("renders loading state", () => {
     mockUseSeasonsControllerFindAll.mockReturnValue({ isLoading: true });
-    render(<SeasonListPage />);
+    renderWithProviders(<SeasonListPage />);
     expect(screen.getByTestId("loading")).toBeInTheDocument();
   });
 
@@ -27,17 +36,13 @@ describe("SeasonListPage", () => {
       isError: true,
       error: new Error("Test error"),
     });
-    render(<SeasonListPage />);
+    renderWithProviders(<SeasonListPage />);
     expect(screen.getByTestId("error")).toHaveTextContent("Test error");
   });
 
   it("renders empty state", () => {
-    mockUseSeasonsControllerFindAll.mockReturnValue({
-      isLoading: false,
-      isError: false,
-      data: [],
-    });
-    render(<SeasonListPage />);
+    mockUseSeasonsControllerFindAll.mockReturnValue({ isLoading: false, isError: false, data: [] });
+    renderWithProviders(<SeasonListPage />);
     expect(screen.getByTestId("empty")).toBeInTheDocument();
   });
 
@@ -46,40 +51,14 @@ describe("SeasonListPage", () => {
       isLoading: false,
       isError: false,
       data: [
-        {
-          year: 2023,
-          url: "",
-          winner: {
-            driverId: "1",
-            givenName: "Max",
-            familyName: "Verstappen",
-            nationality: "Dutch",
-            url: "",
-            dateOfBirth: "1997-09-30",
-          },
-        },
-        {
-          year: 2022,
-          url: "",
-          winner: {
-            driverId: "2",
-            givenName: "Lewis",
-            familyName: "Hamilton",
-            nationality: "British",
-            url: "",
-            dateOfBirth: "1985-01-07",
-          },
-        },
+        { year: 2023, url: '', winner: { driverId: '1', givenName: 'Max', familyName: 'Verstappen', nationality: 'Dutch', url: '', dateOfBirth: '1997-09-30' } },
+        { year: 2022, url: '', winner: { driverId: '2', givenName: 'Lewis', familyName: 'Hamilton', nationality: 'British', url: '', dateOfBirth: '1985-01-07' } },
       ],
     });
-    render(
-      <MemoryRouter>
-        <SeasonListPage />
-      </MemoryRouter>
-    );
+    renderWithProviders(<SeasonListPage />);
     expect(screen.getAllByTestId(/champion-card-/)).toHaveLength(2);
-    expect(screen.getByText("Max Verstappen")).toBeInTheDocument();
-    expect(screen.getByText("Lewis Hamilton")).toBeInTheDocument();
+    expect(screen.getByText('Max Verstappen')).toBeInTheDocument();
+    expect(screen.getByText('Lewis Hamilton')).toBeInTheDocument();
   });
 
   it("navigates to details page on card click", () => {
@@ -87,28 +66,12 @@ describe("SeasonListPage", () => {
     mockUseSeasonsControllerFindAll.mockReturnValue({
       isLoading: false,
       isError: false,
-
       data: [
-        {
-          year: 2023,
-          url: "",
-          winner: {
-            driverId: "1",
-            givenName: "Max",
-            familyName: "Verstappen",
-            nationality: "Dutch",
-            url: "",
-            dateOfBirth: "1997-09-30",
-          },
-        },
+        { year: 2023, url: '', winner: { driverId: '1', givenName: 'Max', familyName: 'Verstappen', nationality: 'Dutch', url: '', dateOfBirth: '1997-09-30' } },
       ],
     });
-    render(
-      <MemoryRouter>
-        <SeasonListPage />
-      </MemoryRouter>
-    );
-    const card = screen.getByTestId("champion-card-2023");
+    renderWithProviders(<SeasonListPage />);
+    const card = screen.getByTestId('champion-card-2023');
     fireEvent.click(card);
     // No error means the click handler is wired up; full navigation is tested in ChampionCard
   });
