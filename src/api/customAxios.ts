@@ -7,9 +7,10 @@ export const customInstance = <T>(
   config: AxiosRequestConfig,
   options?: AxiosRequestConfig,
 ): Promise<T> => {
+  const VITE_API_BASE_URL = import.meta.env.VITE_API_BASE_URL as string;
   const source = Axios.CancelToken.source();
   const promise: Promise<T> = AXIOS_INSTANCE({
-    baseURL: import.meta.env.VITE_API_BASE_URL as string,
+    baseURL: VITE_API_BASE_URL,
     ...config,
     ...options,
     cancelToken: source.token,
