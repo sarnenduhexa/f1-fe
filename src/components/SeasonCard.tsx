@@ -1,5 +1,7 @@
 import { FaChevronRight, FaCrown } from "react-icons/fa";
 import type { SeasonDto } from "../api/f1DashboardAPI.schemas";
+import { GiTireTracks } from "react-icons/gi";
+import { MdOutlineKeyboardDoubleArrowRight } from "react-icons/md";
 
 interface SeasonCardProps {
   season: SeasonDto;
@@ -24,10 +26,11 @@ const SeasonCard = ({ season, onClick }: SeasonCardProps) => {
     <div
       data-testid={`season-card-${year}`}
       className="
-        bg-gradient-to-r from-gray-800 to-gray-700 rounded-lg shadow-xl p-6 relative
+        bg-gradient-to-r from-gray-900 to-gray-400 dark:from-slate-800 dark:to-slate-600 
+        shadow-xl p-6 px-12 relative
         border-l-4 border-red-600 transition-all duration-300 transform
-        hover:scale-[1.02] hover:shadow-2xl hover:border-red-500
-        cursor-pointer overflow-hidden
+        hover:scale-[0.95] hover:shadow-2xl hover:border-red-500
+        cursor-pointer overflow-hidden md:skew-x-[-8deg] border-r-2 border-r-black pl-12
       "
       onClick={handleCardClick}
       onKeyDown={handleKeyDown}
@@ -38,35 +41,36 @@ const SeasonCard = ({ season, onClick }: SeasonCardProps) => {
       <div className="absolute inset-0 bg-pattern-f1 opacity-5 pointer-events-none z-0"></div>
 
       <h2
-        className="text-4xl font-extrabold text-white mb-3 relative z-10"
+        className="text-4xl font-extrabold text-gray-200 dark:text-white mb-3 relative z-10"
         data-testid={`season-year-${year}`}
       >
-        {year} Season
+        {year} 
       </h2>
-      <div className="flex items-center text-gray-200 relative z-10 flex-wrap">
+      <div className="flex items-center text-neutral-500 dark:text-gray-400 relative z-10 flex-wrap">
         <span className="text-xl font-semibold mr-2">World Champion:</span>
         {winner ? (
           <div
-            className="flex items-center"
+            className="flex items-baseline"
             data-testid={`champion-info-${year}`}
           >
             <FaCrown
-              className="text-yellow-400 text-2xl mr-2 flex-shrink-0"
+              className="text-yellow-400 text-2xl mr-2 flex-shrink-0 align-self-center"
               aria-hidden="true"
             />
-            <span className="text-xl font-medium text-white">
+            <span className="text-xl font-medium text-white dark:text-gray-200">
               {winner.givenName} {winner.familyName}
             </span>
-            {winner.nationality && (
-              <span className="text-gray-300 text-sm ml-2">
-                ({winner.nationality})
-              </span>
-            )}
             {winner.code && (
-              <span className="text-gray-300 text-sm ml-1">
+              <div className="text-neutral-400 dark:text-zinc-100 text-sm ml-1">
                 ({winner.code})
-              </span>
+              </div>
             )}
+            {winner.nationality && (
+              <div className="text-neutral-300 dark:text-zinc-100 text-sm ml-2">
+                ({winner.nationality})
+              </div>
+            )}
+            
           </div>
         ) : (
           <span
@@ -78,8 +82,12 @@ const SeasonCard = ({ season, onClick }: SeasonCardProps) => {
         )}
       </div>
 
-      <div className="absolute top-1/2 right-6 -translate-y-1/2 text-white text-3xl opacity-70 group-hover:opacity-100 transition-opacity duration-300">
-        <FaChevronRight aria-hidden="true" />
+      <div className="absolute bottom-0 right-8 text-neutral-800/20 h-42 w-48 overflow-clip transform scale-165 -rotate-z-33 align-middle md:block hidden" aria-hidden="true">
+        <GiTireTracks className="h-48 w-48" aria-hidden="true" />
+      </div>
+
+      <div className="absolute top-1/2 right-16 -translate-y-1/2 text-black dark:text-white text-3xl opacity-70 group-hover:opacity-100 transition-opacity duration-300">
+        <MdOutlineKeyboardDoubleArrowRight className="h-18 w-18" aria-hidden="true" />
       </div>
     </div>
   );

@@ -11,7 +11,7 @@ const RaceRow = ({ race, isChampionWin }: RaceRowProps) => {
 
   const rowClasses = `
     border-b border-gray-600
-    ${isChampionWin ? 'bg-yellow-800 bg-opacity-30 font-semibold' : 'bg-gray-700'}
+    ${isChampionWin ? 'bg-f1-purple bg-opacity-30 font-semibold' : 'bg-gray-700'}
     hover:bg-gray-600 transition-colors duration-200 text-white
   `;
 

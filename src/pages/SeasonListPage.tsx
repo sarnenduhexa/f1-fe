@@ -6,8 +6,8 @@ import { useNavigate } from 'react-router-dom';
 import { useSeasonContext } from '../context/Season/SeasonContext';
 import SeasonCard from '../components/SeasonCard';
 import Spinner from '../components/Spinner';
-import { FaFlagCheckered, FaTrophy } from 'react-icons/fa';
 import { SiF1 } from "react-icons/si";
+import { GiF1Car } from "react-icons/gi";
 
 const SeasonListPage: React.FC = () => {
   const { data, isLoading, isError, error } = useSeasonsControllerFindAll();
@@ -34,15 +34,15 @@ const SeasonListPage: React.FC = () => {
   };
 
   return (
-    <div className="container mx-auto px-4 py-8 bg-gray-900 text-white min-h-screen">
-      <header className="text-center mb-12 bg-red-800 p-6 rounded-xl shadow-lg relative overflow-hidden">
-        <FaFlagCheckered className="absolute top-4 left-4 text-white text-opacity-20 text-6xl transform -rotate-12" aria-hidden="true" />
-        <FaTrophy className="absolute bottom-4 right-4 text-white text-opacity-20 text-6xl transform rotate-12" aria-hidden="true" />
-
-        <h1 className="text-5xl font-extrabold text-white mb-2 relative z-10" data-testid="overview-header" style={{ fontFamily: 'Formula1, sans-serif' }}>
-          <span className="text-yellow-400">F1</span> DASHBOARD
+    <div className="mx-auto w-full px-4 py-8 bg-gray-100 dark:bg-gray-900 text-white min-h-screen">
+      <header className="mb-12 bg-f1-red p-6 shadow-lg relative overflow-hidden">
+        <SiF1 className="absolute top-4 left-4 text-yellow-400 text-opacity-20 text-6xl text-shadow-lg/50" aria-hidden="true" />
+        <GiF1Car className="absolute bottom-4 right-10 text-white text-opacity-20 text-9xl drop-shadow-xl/50 transform align-middle md:block hidden top-2" aria-hidden="true" />
+        
+        <h1 className="text-4xl md:text-5xl font-extrabold pl-16 text-white text-shadow-lg/30 mb-2 relative z-10" data-testid="overview-header" style={{ fontFamily: 'Formula1, sans-serif' }}>
+          DASHBOARD
         </h1>
-        <p className="text-xl text-white text-opacity-90 relative z-10">Explore Formula 1 Seasons & Champions</p>
+        <p className="text-xl text-white text-opacity-90 text-shadow-md relative z-10">Explore Formula 1 Seasons & Champions</p>
       </header>
 
       {seasons.length === 0 ? (

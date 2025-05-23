@@ -31,7 +31,6 @@ const SeasonDetailsPage: React.FC = () => {
     }
   }, [season, fetchedSeason]);
 
-  // Fetch races for the season
   const {
     data: races,
     isLoading: isRacesLoading,
