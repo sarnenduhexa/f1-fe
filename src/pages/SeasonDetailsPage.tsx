@@ -62,57 +62,58 @@ const SeasonDetailsPage: React.FC = () => {
   const championId = season.winner?.driverId || season.winnerDriverId;
 
   return (
-    <div className="container mx-auto px-4 py-8 bg-gray-900 text-white min-h-screen" data-testid="season-races-page">
-      <header className="flex flex-col sm:flex-row justify-between items-center mb-8 bg-red-800 p-6 rounded-xl shadow-lg relative overflow-hidden">
+    <div className="w-full mx-auto px-4 py-8 bg-gray-100 dark:bg-gray-900 text-white min-h-screen" data-testid="season-races-page">
+      <header className="flex flex-col sm:flex-row justify-between items-center p-6 shadow-lg relative overflow-hidden mb-2 bg-f1-red">
         <FaFlagCheckered className="absolute top-4 left-4 text-white text-opacity-20 text-5xl transform -rotate-12" aria-hidden="true" />
         <FaFlagCheckered className="absolute bottom-4 right-4 text-white text-opacity-20 text-5xl transform rotate-12" aria-hidden="true" />
 
-        <button
+        <div className="text-center sm:text-left flex-grow z-10 mx-16">
+          <h1 className="text-3xl sm:text-4xl font-extrabold " data-testid="season-title">
+            <span className="text-f1-yellow">RACES</span> <span className='text-white'>- SEASON {season.year} </span>
+          </h1>
+          {season.winner && (
+            <div className="text-lg sm:text-xl font-medium text-gray-100 mt-2" data-testid="season-champion-display">
+              <span>Season Champion: </span><span className="text-f1-yellow font-semibold">{season.winner.givenName} {season.winner.familyName}</span>
+            </div>
+          )}
+        </div>
+      </header>
+
+      <button
           onClick={() => navigate('/')}
-          className="bg-gray-700 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded transition-colors duration-200 mb-4 sm:mb-0 sm:mr-4 z-10"
+          className="bg-gray-700 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded transition-colors my-8 cursor-pointer"
           aria-label="Back to Seasons Overview"
           data-testid="back-button"
         >
           &larr; Back to Seasons
-        </button>
-        <div className="text-center sm:text-left flex-grow z-10">
-          <h1 className="text-3xl sm:text-4xl font-extrabold text-white" data-testid="season-title" style={{ fontFamily: 'Formula1, sans-serif' }}>
-            <span className="text-yellow-400">RACES</span> - {season.year} SEASON
-          </h1>
-          {season.winner && (
-            <p className="text-lg sm:text-xl font-medium text-gray-200 mt-2" data-testid="season-champion-display">
-              Season Champion: <span className="text-yellow-400 font-semibold">{season.winner.givenName} {season.winner.familyName}</span>
-            </p>
-          )}
-        </div>
-      </header>
+      </button>
 
       {races?.length === 0 ? (
         <p className="text-center text-gray-400 text-lg mt-10" data-testid="no-races-message">No races found for this season.</p>
       ) : (
         <>
-          <div className="hidden md:block overflow-x-auto shadow-lg rounded-lg" data-testid="races-table-container">
+          <div className="hidden md:block overflow-x-auto shadow-lg" data-testid="races-table-container">
             <table className="min-w-full divide-y divide-gray-700">
-              <thead className="bg-gray-800">
+              <thead className="bg-slate-600 text-gray-50">
                 <tr>
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
+                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">
                     Round
                   </th>
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
+                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">
                     Race Name
                   </th>
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
+                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">
                     Circuit
                   </th>
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
+                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">
                     Date
                   </th>
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
+                  <th scope="col" className="px-6 py-3 text-center text-xs font-medium uppercase tracking-wider">
                     Race Winner
                   </th>
                 </tr>
               </thead>
-              <tbody className="bg-gray-700 divide-y divide-gray-600">
+              <tbody className="bg-stone-100 dark:bg-gray-700 divide-y divide-gray-600">
                 {races?.map((race) => (
                   <RaceRow
                     key={race.round}

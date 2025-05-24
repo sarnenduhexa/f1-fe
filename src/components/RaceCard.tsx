@@ -13,8 +13,8 @@ const RaceCard = ({ race, isChampionWin }: RaceCardProps) => {
     <div
       data-testid={`race-card-${race.round}`}
       className={`
-        bg-gradient-to-r from-gray-800 to-gray-700 rounded-lg shadow-md p-4 mb-4 relative overflow-hidden
-        ${isChampionWin ? 'border-l-4 border-yellow-500' : 'border-l-4 border-gray-600'}
+        bg-gradient-to-r from-gray-800 to-gray-700 shadow-md p-4 mb-4 relative overflow-hidden
+        ${isChampionWin ? 'border-l-8 border-f1-yellow' : 'border-l-8 border-gray-600'}
         text-white
       `}
       role="listitem"
@@ -26,7 +26,7 @@ const RaceCard = ({ race, isChampionWin }: RaceCardProps) => {
         <h3 className="text-xl font-bold text-white" data-testid={`race-name-${race.round}`}>
           Round {round}: {raceName}
         </h3>
-        {isChampionWin && <FaTrophy className="text-yellow-400 text-2xl" title="Champion's Win" aria-label="Season Champion won this race" />}
+        {isChampionWin && <FaTrophy className="text-f1-yellow text-2xl" title="Champion's Win" aria-label="Season Champion won this race" />}
       </div>
       <p className="text-gray-300 text-sm mb-1 relative z-10">
         <span className="font-semibold">Circuit:</span> {circuitName}

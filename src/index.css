@@ -1,7 +1,15 @@
+
+@import url('https://fonts.googleapis.com/css2?family=Audiowide&display=swap');
 @import "tailwindcss";
 
 @theme {
     --color-f1-red: #e10600;
     --color-f1-yellow: #ffd301;
     --color-f1-purple: #581c87;
+    --color-f1-blue: #00079e;
+    --font-f1: 'Audiowide', system-ui, sans-serif;
+}
+
+* {
+    font-family: var(--font-f1);
 }

@@ -39,8 +39,8 @@ const SeasonListPage: React.FC = () => {
         <SiF1 className="absolute top-4 left-4 text-yellow-400 text-opacity-20 text-6xl text-shadow-lg/50" aria-hidden="true" />
         <GiF1Car className="absolute bottom-4 right-10 text-white text-opacity-20 text-9xl drop-shadow-xl/50 transform align-middle md:block hidden top-2" aria-hidden="true" />
         
-        <h1 className="text-4xl md:text-5xl font-extrabold pl-16 text-white text-shadow-lg/30 mb-2 relative z-10" data-testid="overview-header" style={{ fontFamily: 'Formula1, sans-serif' }}>
-          DASHBOARD
+        <h1 className="text-4xl md:text-5xl pl-16 text-white text-shadow-lg/30 mb-2 relative z-10 md:tracking-wider" data-testid="overview-header">
+          Dashboard
         </h1>
         <p className="text-xl text-white text-opacity-90 text-shadow-md relative z-10">Explore Formula 1 Seasons & Champions</p>
       </header>

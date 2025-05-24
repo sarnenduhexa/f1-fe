@@ -86,7 +86,7 @@ const SeasonCard = ({ season, onClick }: SeasonCardProps) => {
         <GiTireTracks className="h-48 w-48" aria-hidden="true" />
       </div>
 
-      <div className="absolute top-1/2 right-16 -translate-y-1/2 text-black dark:text-white text-3xl opacity-70 group-hover:opacity-100 transition-opacity duration-300">
+      <div className="absolute top-1/2 right-1 md:right-16 -translate-y-1/2 text-black dark:text-white text-3xl opacity-70 group-hover:opacity-100 transition-opacity duration-300">
         <MdOutlineKeyboardDoubleArrowRight className="h-18 w-18" aria-hidden="true" />
       </div>
     </div>
