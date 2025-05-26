@@ -1,4 +1,4 @@
-import { useTheme } from '../context/ThemeContext';
+import { useTheme } from '../context/Theme/ThemeContext';
 import { GoMoon, GoSun } from "react-icons/go";
 
 export function ThemeToggle() {

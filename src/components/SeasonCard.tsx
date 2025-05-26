@@ -1,4 +1,4 @@
-import { FaChevronRight, FaCrown } from "react-icons/fa";
+import { FaCrown } from "react-icons/fa";
 import type { SeasonDto } from "../api/f1DashboardAPI.schemas";
 import { GiTireTracks } from "react-icons/gi";
 import { MdOutlineKeyboardDoubleArrowRight } from "react-icons/md";

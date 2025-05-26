@@ -85,7 +85,7 @@ const SeasonDetailsPage: React.FC = () => {
       </header>
 
       <button
-          onClick={() => navigate('/')}
+          onClick={() => void navigate('/')}
           className="bg-gray-700 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded transition-colors my-8 cursor-pointer"
           aria-label="Back to Seasons Overview"
           data-testid="back-button"
