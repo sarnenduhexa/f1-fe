@@ -83,11 +83,11 @@ const SeasonCard = ({ season, onClick }: SeasonCardProps) => {
       </div>
 
       <div className="absolute bottom-0 right-8 text-neutral-800/20 h-42 w-48 overflow-clip transform scale-165 -rotate-z-33 align-middle md:block hidden" aria-hidden="true">
-        <GiTireTracks className="h-48 w-48" aria-hidden="true" />
+        <GiTireTracks data-testid="tire-tracks" className="h-48 w-48" aria-hidden="true" />
       </div>
 
       <div className="absolute top-1/2 right-1 md:right-16 -translate-y-1/2 text-black dark:text-white text-3xl opacity-70 group-hover:opacity-100 transition-opacity duration-300">
-        <MdOutlineKeyboardDoubleArrowRight className="h-18 w-18" aria-hidden="true" />
+        <MdOutlineKeyboardDoubleArrowRight data-testid="double-arrow" className="h-18 w-18" aria-hidden="true" />
       </div>
     </div>
   );

@@ -28,16 +28,18 @@ const RaceCard = ({ race, isChampionWin }: RaceCardProps) => {
         </h3>
         {isChampionWin && <FaTrophy className="text-f1-yellow text-2xl" title="Champion's Win" aria-label="Season Champion won this race" />}
       </div>
-      <p className="text-gray-300 text-sm mb-1 relative z-10">
+      <p data-testid={`circuit-name-${race.round}`} className="text-gray-300 text-sm mb-1 relative z-10">
         <span className="font-semibold">Circuit:</span> {circuitName}
       </p>
-      <p className="text-gray-300 text-sm mb-2 relative z-10">
+      <p data-testid={`date-${race.round}`} className="text-gray-300 text-sm mb-2 relative z-10">
         <span className="font-semibold">Date:</span> {new Date(date).toLocaleDateString()}
       </p>
       <div className="flex items-center text-gray-200 flex-wrap relative z-10">
-        <span className="font-semibold mr-1">Winner:</span>
-        <span className="font-medium text-white">
-          {winnerDriver?.givenName} {winnerDriver?.familyName}
+        <span data-testid={`winner-${race.round}`}>
+          <span className="font-semibold mr-1">Winner:</span>
+          <span className="font-medium text-white">
+            {winnerDriver?.givenName} {winnerDriver?.familyName}
+          </span>
         </span>
         {winnerDriver?.nationality && (
           <span className="text-gray-400 text-xs ml-1">({winnerDriver?.nationality})</span>
