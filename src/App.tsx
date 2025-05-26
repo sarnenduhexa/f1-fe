@@ -4,7 +4,6 @@ import SeasonListPage from './pages/SeasonListPage'
 import SeasonDetailsPage from './pages/SeasonDetailsPage'
 import { SeasonProvider } from './context/Season/SeasonProvidor'
 
-
 function App() {
   return (
     <SeasonProvider>

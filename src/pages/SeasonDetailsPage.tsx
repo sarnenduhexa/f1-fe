@@ -8,6 +8,7 @@ import Spinner from '../components/Spinner';
 import RaceRow from '../components/RaceRow';
 import RaceCard from '../components/RaceCard';
 import { FaFlagCheckered } from 'react-icons/fa';
+import { ThemeToggle } from '../components/ThemeToggle';
 
 const SeasonDetailsPage: React.FC = () => {
   const { seasonId } = useParams<{ seasonId: string }>();
@@ -62,18 +63,22 @@ const SeasonDetailsPage: React.FC = () => {
   const championId = season.winner?.driverId || season.winnerDriverId;
 
   return (
-    <div className="w-full mx-auto px-4 py-8 bg-gray-100 dark:bg-gray-900 text-white min-h-screen" data-testid="season-races-page">
+    <div className="w-full mx-auto px-4 py-4 bg-gray-100 dark:bg-gray-900 text-white min-h-screen" data-testid="season-races-page">
+      
       <header className="flex flex-col sm:flex-row justify-between items-center p-6 shadow-lg relative overflow-hidden mb-2 bg-f1-red">
+        <div className='absolute top-2 right-2 z-10'>
+          <ThemeToggle />
+        </div>
         <FaFlagCheckered className="absolute top-4 left-4 text-white text-opacity-20 text-5xl transform -rotate-12" aria-hidden="true" />
         <FaFlagCheckered className="absolute bottom-4 right-4 text-white text-opacity-20 text-5xl transform rotate-12" aria-hidden="true" />
 
         <div className="text-center sm:text-left flex-grow z-10 mx-16">
           <h1 className="text-3xl sm:text-4xl font-extrabold " data-testid="season-title">
-            <span className="text-f1-yellow">RACES</span> <span className='text-white'>- SEASON {season.year} </span>
+            <span className="text-f1-yellow">RACES</span> <span className='text-white text-shadow-lg'>- SEASON {season.year} </span>
           </h1>
           {season.winner && (
             <div className="text-lg sm:text-xl font-medium text-gray-100 mt-2" data-testid="season-champion-display">
-              <span>Season Champion: </span><span className="text-f1-yellow font-semibold">{season.winner.givenName} {season.winner.familyName}</span>
+              <span>Season Champion: </span><span className="text-f1-yellow font-semibold text-3xl text-shadow-lg">{season.winner.givenName} {season.winner.familyName}</span>
             </div>
           )}
         </div>
@@ -138,63 +143,6 @@ const SeasonDetailsPage: React.FC = () => {
       )}
     </div>
   );
-
-  /* return (
-    <section className="max-w-4xl mx-auto px-4 py-8">
-      <div className="bg-gray-900 text-white rounded-lg p-6 mb-8 flex flex-col sm:flex-row items-center justify-between">
-        <div>
-          <h2 className="text-2xl font-bold mb-2">{season.year} Champion</h2>
-          {season.winner ? (
-            <>
-              <div className="text-xl font-semibold">{season.winner.givenName} {season.winner.familyName}</div>
-              <div className="text-sm text-gray-300">{season.winner.nationality}</div>
-            </>
-          ) : (
-            <div className="text-gray-400">No winner data</div>
-          )}
-        </div>
-      </div>
-      <h3 className="text-xl font-bold mb-4">Race Results</h3>
-      <div className="overflow-x-auto">
-        <table className="min-w-full border border-gray-300 rounded-lg">
-          <thead className="bg-gray-200 dark:bg-gray-700">
-            <tr>
-              <th className="px-4 py-2">Date</th>
-              <th className="px-4 py-2">Grand Prix</th>
-              <th className="px-4 py-2">Winner</th>
-            </tr>
-          </thead>
-          <tbody>
-            {Array.isArray(races) && races.length > 0 ? (
-              races.map((race: RaceDto) => (
-                <tr
-                  key={race.id}
-                  className={
-                    race.winnerDriverId === championId
-                      ? 'bg-yellow-100 dark:bg-yellow-900 font-bold'
-                      : ''
-                  }
-                  data-testid={race.winnerDriverId === championId ? 'champion-win' : undefined}
-                >
-                  <td className="px-4 py-2">{race.date}</td>
-                  <td className="px-4 py-2">{race.raceName}</td>
-                  <td className="px-4 py-2">
-                    {race.winnerDriver
-                      ? `${race.winnerDriver.givenName} ${race.winnerDriver.familyName}`
-                      : '-'}
-                  </td>
-                </tr>
-              ))
-            ) : (
-              <tr>
-                <td colSpan={3} className="text-center py-4">No races found.</td>
-              </tr>
-            )}
-          </tbody>
-        </table>
-      </div>
-    </section>
-  ); */
 };
 
 export default SeasonDetailsPage; 

@@ -12,7 +12,13 @@ const RaceRow = ({ race, isChampionWin }: RaceRowProps) => {
   const rowClasses = `
     border-b border-gray-600
     ${isChampionWin ? 'bg-f1-blue/80 text-stone-50' : ''}
-    hover:bg-gray-300 text-black dark:text-white hover:text-black dark:hover:text-white`;
+    text-black dark:text-white 
+  `;
+
+  const infoLinkClasses = `
+    ml-2 hover:underline text-xs 
+    ${isChampionWin ? 'text-amber-400' : 'text-blue-600 dark:text-blue-300'}
+  `;
 
   return (
     <tr className={rowClasses} data-testid={`race-row-${race.round}`}>
@@ -26,7 +32,7 @@ const RaceRow = ({ race, isChampionWin }: RaceRowProps) => {
                 href={race.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="ml-2 text-blue-400 hover:underline text-xs"
+                className={infoLinkClasses}
                 aria-label={`View details for ${raceName}`}
             >
                 (Info)
@@ -58,7 +64,7 @@ const RaceRow = ({ race, isChampionWin }: RaceRowProps) => {
                   href={winnerDriver?.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="ml-2 text-blue-400 hover:underline text-xs"
+                  className={infoLinkClasses}
                   aria-label={`Learn more about ${winnerDriver?.givenName} ${winnerDriver?.familyName}`}
               >
                   (Bio)

@@ -27,10 +27,10 @@ const SeasonCard = ({ season, onClick }: SeasonCardProps) => {
       data-testid={`season-card-${year}`}
       className="
         bg-gradient-to-r from-gray-900 to-gray-400 dark:from-slate-800 dark:to-slate-600 
-        shadow-xl p-6 px-12 relative
+        shadow-xl p-4 md:px-12 md:py-6 relative
         border-l-4 border-red-600 transition-all duration-300 transform
         hover:scale-[0.95] hover:shadow-2xl hover:border-red-500
-        cursor-pointer overflow-hidden md:skew-x-[-8deg] border-r-2 border-r-black pl-12
+        cursor-pointer overflow-hidden md:skew-x-[-8deg] border-r-2 border-r-black 
       "
       onClick={handleCardClick}
       onKeyDown={handleKeyDown}
