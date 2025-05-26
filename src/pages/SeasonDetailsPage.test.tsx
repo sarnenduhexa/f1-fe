@@ -110,14 +110,14 @@ describe('SeasonDetailsPage', () => {
       isLoading: false,
       isError: true,
       error: new Error('Failed to fetch season'),
-    } as any);
+    } as unknown as any);
 
     vi.mocked(useRacesControllerFindBySeason).mockReturnValue({
       data: undefined,
       isLoading: false,
       isError: false,
       error: null,
-    } as any);
+    } as unknown as any);
 
     renderWithRouter(<SeasonDetailsPage />);
     expect(screen.getByTestId('season-error-message-container')).toBeInTheDocument();
@@ -136,7 +136,7 @@ describe('SeasonDetailsPage', () => {
       isLoading: false,
       isError: true,
       error: new Error('Failed to fetch races'),
-    } as any);
+    } as unknown as any);
 
     renderWithRouter(<SeasonDetailsPage />);
     expect(screen.getByTestId('race-error-message-container')).toBeInTheDocument();
@@ -148,13 +148,13 @@ describe('SeasonDetailsPage', () => {
       isLoading: false,
       isError: false,
       error: null,
-    } as any);
+    } as unknown as any);
     vi.mocked(useRacesControllerFindBySeason).mockReturnValue({
       data: undefined,
       isLoading: false,
       isError: false,
       error: null,
-    } as any);
+    } as unknown as any);
 
     renderWithRouter(<SeasonDetailsPage />);
     expect(screen.getByTestId('season-not-found-message')).toBeInTheDocument();
@@ -166,14 +166,14 @@ describe('SeasonDetailsPage', () => {
       isLoading: false,
       isError: false,
       error: null,
-    } as any);
+    } as unknown as any);
 
     vi.mocked(useRacesControllerFindBySeason).mockReturnValue({
       data: mockRaces,
       isLoading: false,
       isError: false,
       error: null,
-    } as any);
+    } as unknown as any);
 
     renderWithRouter(<SeasonDetailsPage />);
     
@@ -200,14 +200,14 @@ describe('SeasonDetailsPage', () => {
       isLoading: false,
       isError: false,
       error: null,
-    } as any);
+    } as unknown as any);
 
     vi.mocked(useRacesControllerFindBySeason).mockReturnValue({
       data: mockRaces,
       isLoading: false,
       isError: false,
       error: null,
-    } as any);
+    } as unknown as any);
 
     renderWithRouter(<SeasonDetailsPage />);
     const backButton = screen.getByTestId('back-button');
@@ -221,14 +221,14 @@ describe('SeasonDetailsPage', () => {
       isLoading: false,
       isError: false,
       error: null,
-    } as any);
+    } as unknown as any);
 
     vi.mocked(useRacesControllerFindBySeason).mockReturnValue({
       data: [],
       isLoading: false,
       isError: false,
       error: null,
-    } as any);
+    } as unknown as any);
 
     renderWithRouter(<SeasonDetailsPage />);
     expect(screen.getByTestId('no-races-message')).toBeInTheDocument();

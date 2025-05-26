@@ -7,6 +7,15 @@ import React from "react";
 import { MemoryRouter } from "react-router-dom";
 import { SeasonContext } from "../context/Season/SeasonContext";
 
+const mockNavigate = vi.fn();
+vi.mock(import("react-router-dom"), async (importOriginal) => {
+  const actual = await importOriginal()
+  return {
+    ...actual,
+    useNavigate: () => mockNavigate,
+  }
+})
+
 vi.mock("../api/seasons/seasons");
 
 const mockUseSeasonsControllerFindAll =
@@ -98,5 +107,6 @@ describe("SeasonListPage", () => {
     const card = screen.getByTestId('season-card-2023');
     fireEvent.click(card);
     // No error means the click handler is wired up; full navigation is tested in ChampionCard
+    expect(mockNavigate).toHaveBeenCalledWith('/season/2023');
   });
 });
