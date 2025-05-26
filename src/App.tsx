@@ -2,8 +2,7 @@ import './App.css'
 import { Routes, Route } from 'react-router-dom'
 import SeasonListPage from './pages/SeasonListPage'
 import SeasonDetailsPage from './pages/SeasonDetailsPage'
-import { SeasonProvider } from './context/Season/SeasonProvidor'
-
+import { SeasonProvider } from './context/Season/SeasonProvider'
 
 function App() {
   return (

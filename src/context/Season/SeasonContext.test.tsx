@@ -1,5 +1,5 @@
 import { act, render, screen } from '@testing-library/react';
-import { SeasonProvider } from './SeasonProvidor';
+import { SeasonProvider } from './SeasonProvider';
 import { vi, describe, it, expect } from 'vitest';
 import { useSeasonContext } from './SeasonContext';
 
