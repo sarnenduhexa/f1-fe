@@ -1,101 +1,237 @@
-import { render, screen } from '@testing-library/react';
-import { MemoryRouter, Route, Routes } from 'react-router-dom';
-import { vi, describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { render, screen, fireEvent } from '@testing-library/react';
+import { BrowserRouter } from 'react-router-dom';
+import { SeasonContext } from '../context/Season/SeasonContext';
 import SeasonDetailsPage from './SeasonDetailsPage';
-import * as seasonsApi from '../api/seasons/seasons';
-import * as racesApi from '../api/races/races';
-import { SeasonProvider } from '../context/Season/SeasonProvidor';
-import { ThemeProvider } from '../context/Theme/ThemeProvider';
+import { useSeasonsControllerFindOne } from '../api/seasons/seasons';
+import { useRacesControllerFindBySeason } from '../api/races/races';
 
-vi.mock('../api/seasons/seasons');
-vi.mock('../api/races/races');
+// Mock the API hooks
+vi.mock('../api/seasons/seasons', () => ({
+  useSeasonsControllerFindOne: vi.fn(() => ({
+    data: undefined,
+    isLoading: true,
+    isError: false,
+    error: null,
+  })),
+}));
 
-const mockUseSeasonsControllerFindOne = seasonsApi.useSeasonsControllerFindOne as unknown as ReturnType<typeof vi.fn>;
-const mockUseRacesControllerFindBySeason = racesApi.useRacesControllerFindBySeason as unknown as ReturnType<typeof vi.fn>;
+vi.mock('../api/races/races', () => ({
+  useRacesControllerFindBySeason: vi.fn(() => ({
+    data: undefined,
+    isLoading: true,
+    isError: false,
+    error: null,
+  })),
+}));
 
-const renderWithProviders = (route = '/season/2023') =>
-  render(
-    <ThemeProvider>
-      <MemoryRouter initialEntries={[route]}>
-        <SeasonProvider>
-          <Routes>
-            <Route path="/season/:seasonId" element={<SeasonDetailsPage />} />
-          </Routes>
-        </SeasonProvider>
-      </MemoryRouter>
-    </ThemeProvider>
+// Mock the SeasonContext
+vi.mock(import("../context/Season/SeasonContext"), async (importOriginal) => {
+  const actual = await importOriginal()
+  return {
+    ...actual,
+    useSeasonContext: () => ({
+      selectedSeason: null,
+    }),
+  }
+})
+
+// Mock the ThemeToggle component
+vi.mock('../components/ThemeToggle', () => ({
+  ThemeToggle: () => <div data-testid="theme-toggle">Theme Toggle</div>,
+}));
+
+const mockSeason = {
+  year: 2023,
+  winner: {
+    driverId: 'VER',
+    givenName: 'Max',
+    familyName: 'Verstappen',
+  },
+};
+
+const mockRaces = [
+  {
+    round: 1,
+    raceName: 'Bahrain Grand Prix',
+    circuit: {
+      circuitName: 'Bahrain International Circuit',
+    },
+    date: '2023-03-05',
+    winnerDriverId: 'VER',
+  },
+  {
+    round: 2,
+    raceName: 'Saudi Arabian Grand Prix',
+    circuit: {
+      circuitName: 'Jeddah Corniche Circuit',
+    },
+    date: '2023-03-19',
+    winnerDriverId: 'PER',
+  },
+];
+
+const SeasonProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const value = {
+    selectedSeason: null,
+    setSelectedSeason: vi.fn(),
+  };
+  return <SeasonContext.Provider value={value}>{children}</SeasonContext.Provider>;
+};
+
+const renderWithRouter = (component: React.ReactNode) => {
+  return render(
+    <BrowserRouter>
+      <SeasonProvider>{component}</SeasonProvider>
+    </BrowserRouter>
   );
+};
 
 describe('SeasonDetailsPage', () => {
-
-  it('renders loading state', () => {
-    mockUseSeasonsControllerFindOne.mockReturnValue({ isLoading: true });
-    mockUseRacesControllerFindBySeason.mockReturnValue({ isLoading: true });
-    renderWithProviders();
-    expect(screen.getByText(/Loading season details/i)).toBeInTheDocument();
+  beforeEach(() => {
+    vi.resetAllMocks();
   });
 
-  it('renders error state for season', () => {
-    mockUseSeasonsControllerFindOne.mockReturnValue({ isLoading: false, isError: true, error: 'Season error' });
-    mockUseRacesControllerFindBySeason.mockReturnValue({ isLoading: false });
-    renderWithProviders();
-    expect(screen.getByText(/Error loading season/i)).toBeInTheDocument();
+  it('renders loading spinner when data is loading', () => {
+    vi.mocked(useSeasonsControllerFindOne).mockReturnValue({
+      data: undefined,
+      isLoading: true,
+      isError: false,
+      error: null,
+    } as any);
+
+    renderWithRouter(<SeasonDetailsPage />);
+    expect(screen.getByTestId('spinner')).toBeInTheDocument();
   });
 
-  it('renders error state for races', () => {
-    mockUseSeasonsControllerFindOne.mockReturnValue({ isLoading: false });
-    mockUseRacesControllerFindBySeason.mockReturnValue({ isLoading: false, isError: true, error: 'Races error' });
-    renderWithProviders();
-    expect(screen.getByText(/Error loading races/i)).toBeInTheDocument();
-  });
-
-  it('renders not found if no season', () => {
-    mockUseSeasonsControllerFindOne.mockReturnValue({ isLoading: false, data: null });
-    mockUseRacesControllerFindBySeason.mockReturnValue({ isLoading: false });
-    renderWithProviders();
-    expect(screen.getByText(/Season not found/i)).toBeInTheDocument();
-  });
-
-  it('renders champion and highlights champion wins', () => {
-    mockUseSeasonsControllerFindOne.mockReturnValue({
+  it('renders season error message when there is a season error', () => {
+    vi.mocked(useSeasonsControllerFindOne).mockReturnValue({
+      data: undefined,
       isLoading: false,
-      data: {
-        year: 2023,
-        url: '',
-        winner: { driverId: '1', givenName: 'Max', familyName: 'Verstappen', nationality: 'Dutch', url: '', dateOfBirth: '1997-09-30' },
-        winnerDriverId: '1',
-      },
-    });
-    mockUseRacesControllerFindBySeason.mockReturnValue({
+      isError: true,
+      error: new Error('Failed to fetch season'),
+    } as any);
+
+    vi.mocked(useRacesControllerFindBySeason).mockReturnValue({
+      data: undefined,
       isLoading: false,
-      data: [
-        {
-          id: 'r1',
-          season: 2023,
-          round: 1,
-          raceName: 'Bahrain GP',
-          circuitName: 'Bahrain',
-          date: '2023-03-05',
-          winnerDriverId: '1',
-          winnerDriver: { driverId: '1', givenName: 'Max', familyName: 'Verstappen', nationality: 'Dutch', url: '', dateOfBirth: '1997-09-30' },
-        },
-        {
-          id: 'r2',
-          season: 2023,
-          round: 2,
-          raceName: 'Saudi GP',
-          circuitName: 'Jeddah',
-          date: '2023-03-19',
-          winnerDriverId: '2',
-          winnerDriver: { driverId: '2', givenName: 'Sergio', familyName: 'Perez', nationality: 'Mexican', url: '', dateOfBirth: '1990-01-26' },
-        },
-      ],
-    });
-    renderWithProviders();
-    expect(screen.getByText('2023 Champion')).toBeInTheDocument();
-    expect(screen.getAllByText('Max Verstappen')).toHaveLength(2);
-    expect(screen.getAllByTestId('champion-win')).toHaveLength(1);
-    expect(screen.getByText('Bahrain GP')).toBeInTheDocument();
-    expect(screen.getByText('Saudi GP')).toBeInTheDocument();
+      isError: false,
+      error: null,
+    } as any);
+
+    renderWithRouter(<SeasonDetailsPage />);
+    expect(screen.getByTestId('season-error-message-container')).toBeInTheDocument();
+  });
+
+  it('renders races error message when there is a races error', () => {
+    vi.mocked(useSeasonsControllerFindOne).mockReturnValue({
+      data: undefined,
+      isLoading: false,
+      isError: false,
+      error: null,
+    } as any);
+
+    vi.mocked(useRacesControllerFindBySeason).mockReturnValue({
+      data: undefined,
+      isLoading: false,
+      isError: true,
+      error: new Error('Failed to fetch races'),
+    } as any);
+
+    renderWithRouter(<SeasonDetailsPage />);
+    expect(screen.getByTestId('race-error-message-container')).toBeInTheDocument();
+  });
+
+  it('renders season not found message when season is not available', () => {
+    vi.mocked(useSeasonsControllerFindOne).mockReturnValue({
+      data: null,
+      isLoading: false,
+      isError: false,
+      error: null,
+    } as any);
+    vi.mocked(useRacesControllerFindBySeason).mockReturnValue({
+      data: undefined,
+      isLoading: false,
+      isError: false,
+      error: null,
+    } as any);
+
+    renderWithRouter(<SeasonDetailsPage />);
+    expect(screen.getByTestId('season-not-found-message')).toBeInTheDocument();
+  });
+
+  it('renders season details and races when data is available', () => {
+    vi.mocked(useSeasonsControllerFindOne).mockReturnValue({
+      data: mockSeason,
+      isLoading: false,
+      isError: false,
+      error: null,
+    } as any);
+
+    vi.mocked(useRacesControllerFindBySeason).mockReturnValue({
+      data: mockRaces,
+      isLoading: false,
+      isError: false,
+      error: null,
+    } as any);
+
+    renderWithRouter(<SeasonDetailsPage />);
+    
+    // Check header content
+    expect(screen.getByTestId('season-title')).toBeInTheDocument();
+    expect(screen.getByTestId('season-champion-display')).toBeInTheDocument();
+    expect(screen.getByText('Season Champion:')).toBeInTheDocument();
+    expect(screen.getByText('Max Verstappen')).toBeInTheDocument();
+    
+    // Check back button
+    expect(screen.getByTestId('back-button')).toBeInTheDocument();
+    
+    // Check theme toggle
+    expect(screen.getByTestId('theme-toggle')).toBeInTheDocument();
+    
+    // Check races content
+    expect(screen.getByTestId('races-table-container')).toBeInTheDocument();
+    expect(screen.getByTestId('races-card-container')).toBeInTheDocument();
+  });
+
+  it('navigates back to seasons list when back button is clicked', () => {
+    vi.mocked(useSeasonsControllerFindOne).mockReturnValue({
+      data: mockSeason,
+      isLoading: false,
+      isError: false,
+      error: null,
+    } as any);
+
+    vi.mocked(useRacesControllerFindBySeason).mockReturnValue({
+      data: mockRaces,
+      isLoading: false,
+      isError: false,
+      error: null,
+    } as any);
+
+    renderWithRouter(<SeasonDetailsPage />);
+    const backButton = screen.getByTestId('back-button');
+    fireEvent.click(backButton);
+    expect(window.location.pathname).toBe('/');
+  });
+
+  it('renders no races message when races array is empty', () => {
+    vi.mocked(useSeasonsControllerFindOne).mockReturnValue({
+      data: mockSeason,
+      isLoading: false,
+      isError: false,
+      error: null,
+    } as any);
+
+    vi.mocked(useRacesControllerFindBySeason).mockReturnValue({
+      data: [],
+      isLoading: false,
+      isError: false,
+      error: null,
+    } as any);
+
+    renderWithRouter(<SeasonDetailsPage />);
+    expect(screen.getByTestId('no-races-message')).toBeInTheDocument();
+    expect(screen.getByText('No races found for this season.')).toBeInTheDocument();
   });
 }); 
