@@ -27,6 +27,7 @@ vi.mock(import("../context/Season/SeasonContext"), async (importOriginal) => {
   return {
     ...actual,
     useSeasonContext: () => ({
+      ...actual.useSeasonContext(),
       setSelectedSeason: vi.fn(),
     }),
   }
