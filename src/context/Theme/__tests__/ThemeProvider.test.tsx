@@ -1,33 +1,7 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach, type Mock } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { ThemeProvider } from '../ThemeProvider';
 import { useTheme } from '../ThemeContext';
-
-// Mock localStorage
-const localStorageMock = (() => {
-  let store: Record<string, string> = {};
-  return {
-    getItem: vi.fn((key: string) => store[key] || null),
-    setItem: vi.fn((key: string, value: string) => {
-      store[key] = value;
-    }),
-    clear: () => {
-      store = {};
-    }
-  };
-})();
-
-Object.defineProperty(window, 'localStorage', {
-  value: localStorageMock
-});
-
-// Mock matchMedia
-Object.defineProperty(window, 'matchMedia', {
-  writable: true,
-  value: vi.fn().mockImplementation(() => ({
-    matches: false,
-  })),
-});
 
 // Test component that uses the theme
 function TestComponent() {
@@ -41,10 +15,6 @@ function TestComponent() {
 }
 
 describe('ThemeProvider', () => {
-  beforeEach(() => {
-    localStorageMock.clear();
-    vi.clearAllMocks();
-  });
 
   it('initializes with light theme when no saved theme and no dark mode preference', () => {
     render(
@@ -57,15 +27,8 @@ describe('ThemeProvider', () => {
   });
 
   it('initializes with dark theme when user prefers dark mode', () => {
-    window.matchMedia = vi.fn().mockImplementation(query => ({
+    (window.matchMedia as Mock).mockImplementation(() => ({
       matches: true,
-      media: query,
-      onchange: null,
-      addListener: vi.fn(),
-      removeListener: vi.fn(),
-      addEventListener: vi.fn(),
-      removeEventListener: vi.fn(),
-      dispatchEvent: vi.fn(),
     }));
 
     render(
@@ -78,7 +41,7 @@ describe('ThemeProvider', () => {
   });
 
   it('initializes with saved theme from localStorage', () => {
-    localStorageMock.getItem.mockReturnValue('dark');
+    (localStorage.getItem as Mock).mockReturnValue('dark');
     
     render(
       <ThemeProvider>
@@ -97,15 +60,15 @@ describe('ThemeProvider', () => {
     );
     
     // Initial state
-    expect(screen.getByTestId('theme-value')).toHaveTextContent('dark');
+    expect(screen.getByTestId('theme-value')).toHaveTextContent('light');
     
     // Toggle theme
     fireEvent.click(screen.getByText('Toggle Theme'));
-    expect(screen.getByTestId('theme-value')).toHaveTextContent('light');
+    expect(screen.getByTestId('theme-value')).toHaveTextContent('dark');
     
     // Toggle back
     fireEvent.click(screen.getByText('Toggle Theme'));
-    expect(screen.getByTestId('theme-value')).toHaveTextContent('dark');
+    expect(screen.getByTestId('theme-value')).toHaveTextContent('light');
   });
 
   it('updates localStorage when theme changes', () => {
@@ -116,11 +79,11 @@ describe('ThemeProvider', () => {
     );
     
     // Initial state
-    expect(localStorageMock.setItem).toHaveBeenCalledWith('theme', 'dark');
+    expect(localStorage.setItem).toHaveBeenCalledWith('theme', 'light');
     
     // Toggle theme
     fireEvent.click(screen.getByText('Toggle Theme'));
-    expect(localStorageMock.setItem).toHaveBeenCalledWith('theme', 'light');
+    expect(localStorage.setItem).toHaveBeenCalledWith('theme', 'dark');
   });
 
   it('updates document class when theme changes', () => {
@@ -131,12 +94,12 @@ describe('ThemeProvider', () => {
     );
     
     // Initial state
-    expect(document.documentElement.classList.contains('dark')).toBe(true);
-    expect(document.documentElement.classList.contains('light')).toBe(false);
+    expect(document.documentElement.classList.contains('light')).toBe(true);
+    expect(document.documentElement.classList.contains('dark')).toBe(false);
     
     // Toggle theme
     fireEvent.click(screen.getByText('Toggle Theme'));
-    expect(document.documentElement.classList.contains('dark')).toBe(false);
-    expect(document.documentElement.classList.contains('light')).toBe(true);
+    expect(document.documentElement.classList.contains('light')).toBe(false);
+    expect(document.documentElement.classList.contains('dark')).toBe(true);
   });
 }); 

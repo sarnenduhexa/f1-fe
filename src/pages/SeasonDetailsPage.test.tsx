@@ -5,6 +5,7 @@ import SeasonDetailsPage from './SeasonDetailsPage';
 import * as seasonsApi from '../api/seasons/seasons';
 import * as racesApi from '../api/races/races';
 import { SeasonProvider } from '../context/Season/SeasonProvidor';
+import { ThemeProvider } from '../context/Theme/ThemeProvider';
 
 vi.mock('../api/seasons/seasons');
 vi.mock('../api/races/races');
@@ -14,19 +15,18 @@ const mockUseRacesControllerFindBySeason = racesApi.useRacesControllerFindBySeas
 
 const renderWithProviders = (route = '/season/2023') =>
   render(
-    <MemoryRouter initialEntries={[route]}>
-      <SeasonProvider>
-        <Routes>
-          <Route path="/season/:seasonId" element={<SeasonDetailsPage />} />
-        </Routes>
-      </SeasonProvider>
-    </MemoryRouter>
+    <ThemeProvider>
+      <MemoryRouter initialEntries={[route]}>
+        <SeasonProvider>
+          <Routes>
+            <Route path="/season/:seasonId" element={<SeasonDetailsPage />} />
+          </Routes>
+        </SeasonProvider>
+      </MemoryRouter>
+    </ThemeProvider>
   );
 
 describe('SeasonDetailsPage', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
 
   it('renders loading state', () => {
     mockUseSeasonsControllerFindOne.mockReturnValue({ isLoading: true });
