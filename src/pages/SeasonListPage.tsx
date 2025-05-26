@@ -52,7 +52,8 @@ const SeasonListPage: React.FC = () => {
 
       
       {seasons.length === 0 ? (
-          <p className="text-center text-gray-400 text-lg">No season data available.</p>
+          <p data-testid="empty" 
+            className="text-center text-gray-400 text-lg">No season data available.</p>
       ) : (
         <div className="grid grid-cols-1 gap-6">
           {seasons.map((season) => (
