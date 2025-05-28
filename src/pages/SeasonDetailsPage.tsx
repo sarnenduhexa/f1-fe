@@ -28,7 +28,7 @@ const SeasonDetailsPage: React.FC = () => {
   });
 
   useEffect(() => {
-    if (!season && fetchedSeason) {
+    if ((!season || !season.winnerDriverId) && fetchedSeason) {
       setSeason(fetchedSeason);
     }
   }, [season, fetchedSeason]);
