@@ -41,7 +41,7 @@ describe('SeasonCard', () => {
   it('displays TBD message when no winner is available', () => {
     render(<SeasonCard season={mockSeasonWithoutWinner} onClick={() => {}} />);
     
-    expect(screen.getByTestId('champion-tbd-2024')).toHaveTextContent('Champion TBD / Season In Progress');
+    expect(screen.getByTestId('champion-tbd-2024')).toHaveTextContent('Could not fetch champion data');
   });
 
   it('calls onClick handler when clicked', () => {

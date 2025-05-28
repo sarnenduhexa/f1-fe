@@ -77,7 +77,7 @@ const SeasonCard = ({ season, onClick }: SeasonCardProps) => {
             className="text-xl font-medium text-gray-400"
             data-testid={`champion-tbd-${year}`}
           >
-            Champion TBD / Season In Progress
+            Could not fetch champion data
           </span>
         )}
       </div>

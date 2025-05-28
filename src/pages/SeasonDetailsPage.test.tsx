@@ -1,10 +1,19 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
-import { BrowserRouter } from 'react-router-dom';
-import { SeasonContext } from '../context/Season/SeasonContext';
+import { MemoryRouter, useParams } from 'react-router-dom';
+import { SeasonContext, useSeasonContext } from '../context/Season/SeasonContext';
 import SeasonDetailsPage from './SeasonDetailsPage';
 import { useSeasonsControllerFindOne } from '../api/seasons/seasons';
 import { useRacesControllerFindBySeason } from '../api/races/races';
+import type { SeasonDto } from '../api/f1DashboardAPI.schemas';
+
+vi.mock(import("react-router-dom"), async (importOriginal) => {
+  const actual = await importOriginal()
+  return {
+    ...actual,
+    useParams: vi.fn(),
+  }
+})
 
 // Mock the API hooks
 vi.mock('../api/seasons/seasons', () => ({
@@ -30,10 +39,10 @@ vi.mock(import("../context/Season/SeasonContext"), async (importOriginal) => {
   const actual = await importOriginal()
   return {
     ...actual,
-    useSeasonContext: () => ({
+    useSeasonContext: vi.fn(() => ({
       ...actual.useSeasonContext(),
       selectedSeason: null,
-    }),
+    })),
   }
 })
 
@@ -82,15 +91,18 @@ const SeasonProvider: React.FC<{ children: React.ReactNode }> = ({ children }) =
 
 const renderWithRouter = (component: React.ReactNode) => {
   return render(
-    <BrowserRouter>
+    <MemoryRouter>
       <SeasonProvider>{component}</SeasonProvider>
-    </BrowserRouter>
+    </MemoryRouter>
   );
 };
 
 describe('SeasonDetailsPage', () => {
   beforeEach(() => {
     vi.resetAllMocks();
+  });
+  beforeEach(() => {
+    vi.mocked(useParams).mockReturnValue({ seasonId: '2023' });
   });
 
   it('renders loading spinner when data is loading', () => {
@@ -234,5 +246,107 @@ describe('SeasonDetailsPage', () => {
     renderWithRouter(<SeasonDetailsPage />);
     expect(screen.getByTestId('no-races-message')).toBeInTheDocument();
     expect(screen.getByText('No races found for this season.')).toBeInTheDocument();
+  });
+
+  it('fetches season data when winnerDriverId is missing', () => {
+    const seasonWithoutWinner = {
+      year: 2023,
+      url: 'https://www.formula1.com/en/results.html/2023/races/2023-bahrain-grand-prix/results.html',
+    };
+
+    vi.mocked(useSeasonsControllerFindOne).mockReturnValue({
+      data: mockSeason,
+      isLoading: false,
+      isError: false,
+      error: null,
+    } as unknown as any);
+
+    vi.mocked(useRacesControllerFindBySeason).mockReturnValue({
+      data: mockRaces,
+      isLoading: false,
+      isError: false,
+      error: null,
+    } as unknown as any);
+
+    vi.mocked(useSeasonContext).mockReturnValue({
+      selectedSeason: seasonWithoutWinner,
+      setSelectedSeason: vi.fn(),
+    });
+
+    renderWithRouter(<SeasonDetailsPage />);
+    
+    // Verify that useSeasonsControllerFindOne was called with enabled: true
+    expect(useSeasonsControllerFindOne).toHaveBeenCalledWith(expect.any(Number), {
+      query: { enabled: true }
+    });
+  });
+
+  it('fetches season data when season is not present in context', () => {
+    vi.mocked(useSeasonsControllerFindOne).mockReturnValue({
+      data: mockSeason,
+      isLoading: false,
+      isError: false,
+      error: null,
+    } as unknown as any);
+
+    vi.mocked(useRacesControllerFindBySeason).mockReturnValue({
+      data: mockRaces,
+      isLoading: false,
+      isError: false,
+      error: null,
+    } as unknown as any);
+
+    // Mock the SeasonContext to return null season
+    vi.mocked(useSeasonContext).mockReturnValue({
+      selectedSeason: null,
+      setSelectedSeason: vi.fn(),
+    });
+
+    renderWithRouter(<SeasonDetailsPage />);
+    
+    // Verify that useSeasonsControllerFindOne was called with enabled: true
+    expect(useSeasonsControllerFindOne).toHaveBeenCalledWith(expect.any(Number), {
+      query: { enabled: true }
+    });
+  });
+
+  it('does not fetch season data when season with driver data is present in context', () => {
+    const seasonWithWinner = {
+      year: 2023,
+      url: 'https://www.formula1.com/en/results.html/2023/races/2023-bahrain-grand-prix/results.html',
+      winner: {
+        driverId: 'VER',
+        givenName: 'Max',
+        familyName: 'Verstappen',
+      },
+      winnerDriverId: 'VER'
+    };
+
+    vi.mocked(useSeasonsControllerFindOne).mockReturnValue({
+      data: mockSeason,
+      isLoading: false,
+      isError: false,
+      error: null,
+    } as unknown as any);
+
+    vi.mocked(useRacesControllerFindBySeason).mockReturnValue({
+      data: mockRaces,
+      isLoading: false,
+      isError: false,
+      error: null,
+    } as unknown as any);
+
+    // Mock the SeasonContext to return a season with winner data
+    vi.mocked(useSeasonContext).mockReturnValue({
+      selectedSeason: seasonWithWinner as SeasonDto,
+      setSelectedSeason: vi.fn(),
+    });
+
+    renderWithRouter(<SeasonDetailsPage />);
+    
+    // Verify that useSeasonsControllerFindOne was called with enabled: false
+    expect(useSeasonsControllerFindOne).toHaveBeenCalledWith(2023, {
+      query: { enabled: false }
+    });
   });
 }); 

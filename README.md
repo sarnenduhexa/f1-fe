@@ -56,23 +56,6 @@ A modern, accessible, and responsive Formula 1 dashboard built with React, TypeS
 
 ## Docker & Production
 
-### **Build and Run with Docker Compose**
-
-1. **Ensure your `docker-compose.yml` includes:**
-   - `frontend` (this app)
-   - `backend` (API service)
-   - `postgres` (database)
-
-2. **Build and start all services:**
-   ```sh
-   docker-compose up --build
-   ```
-   - The frontend will be available at [http://localhost:5173](http://localhost:5173)
-   - The backend and database are networked for seamless API access
-
-3. **Environment Variables:**
-   - The frontend uses `VITE_API_BASE_URL` to communicate with the backend (set to `http://backend:3000` in Docker Compose)
-
 ### **Build and Run the Frontend Independently with Docker**
 
 You can also build and run the frontend app as a standalone Docker container:
@@ -86,7 +69,7 @@ You can also build and run the frontend app as a standalone Docker container:
    docker run -d -p 5173:80 \
      --name f1-fe f1-fe
    ```
-   - Replace `http://localhost:3001` with your backend API URL as needed.
+   - Replace `http://localhost:3001` in the `.env` file with your backend API URL as needed.
    - The app will be available at [http://localhost:5173](http://localhost:5173)
 
 ---
