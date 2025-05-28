@@ -1,9 +1,10 @@
 # Stage 1: Build the app
 FROM node:22-alpine AS builder
 WORKDIR /app
-COPY . .
+COPY package*.json ./
 RUN npm ci
-# Set the API base URL for production build time
+COPY . .
+# If we want to set the API base URL for production build time
 # ARG VITE_API_BASE_URL
 # ENV VITE_API_BASE_URL=$VITE_API_BASE_URL
 RUN npm run build
