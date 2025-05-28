@@ -17,13 +17,14 @@ const SeasonDetailsPage: React.FC = () => {
   const navigate = useNavigate();
 
   // Fetch season if not in context (deep link/refresh)
+  // or if the season has no winner driver id
   const {
     data: fetchedSeason,
     isLoading: isSeasonLoading,
     isError: isSeasonError,
     error: seasonError,
   } = useSeasonsControllerFindOne(Number(seasonId!), {
-    query: { enabled: !season },
+    query: { enabled: !season || !season.winnerDriverId },
   });
 
   useEffect(() => {
