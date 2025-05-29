@@ -4,9 +4,11 @@ WORKDIR /app
 COPY package*.json ./
 RUN npm ci
 COPY . .
-# If we want to set the API base URL for production build time
-# ARG VITE_API_BASE_URL
-# ENV VITE_API_BASE_URL=$VITE_API_BASE_URL
+
+# Build arguments for different environments
+ARG VITE_API_BASE_URL
+ENV VITE_API_BASE_URL=$VITE_API_BASE_URL
+
 RUN npm run build
 
 # Stage 2: Serve with nginx
