@@ -28,6 +28,46 @@ A modern, accessible, and responsive Formula 1 dashboard built with React, TypeS
 
 ---
 
+## Environment Configuration
+
+The application supports multiple environment configurations:
+
+1. **Production Environment**
+   - Uses `.env.production` file
+   - Deployed to production with `:latest` tag
+   - API URL configured via `PROD_API_URL` secret in GitHub
+
+2. **Docker Compose Environment**
+   - Uses `.env.compose` file
+   - Built with `:compose-latest` tag
+   - API URL configured via `COMPOSE_API_URL` secret in GitHub
+
+## Docker Images
+
+The application is built and published to DockerHub with different tags:
+
+- `sarnenduhexa/f1-fe:latest` - Production build
+- `sarnenduhexa/f1-fe:compose-latest` - Docker Compose environment build
+- `sarnenduhexa/f1-fe:<commit-sha>` - Production build with specific commit SHA
+
+## CI/CD Pipeline
+
+The GitHub Actions workflow includes:
+
+1. Security scanning (CodeQL and Trivy)
+2. Installation and testing
+3. Docker image builds for both environments
+4. Container vulnerability scanning
+
+### Required Secrets
+
+The following secrets need to be configured in GitHub:
+
+- `DOCKERHUB_USERNAME` - DockerHub username
+- `DOCKERHUB_TOKEN` - DockerHub access token
+- `PROD_API_URL` - Production API URL
+- `COMPOSE_API_URL` - Docker Compose environment API URL
+
 ## Local Development
 
 1. **Install dependencies:**
@@ -54,63 +94,17 @@ A modern, accessible, and responsive Formula 1 dashboard built with React, TypeS
 
 ---
 
-## Docker & Production
+## Building for Different Environments
 
-### **Build and Run the Frontend Independently with Docker**
+### Production Build
+```bash
+docker build --build-arg VITE_API_BASE_URL=<production-url> -t sarnenduhexa/f1-fe:latest .
+```
 
-You can also build and run the frontend app as a standalone Docker container:
-
-1. **Build the Docker image:**
-   ```sh
-   docker build -t f1-fe .
-   ```
-2. **Run the container:**
-   ```sh
-   docker run -d -p 5173:80 \
-     --name f1-fe f1-fe
-   ```
-   - Replace `http://localhost:3001` in the `.env` file with your backend API URL as needed.
-   - The app will be available at [http://localhost:5173](http://localhost:5173)
-
----
-
-## Continuous Integration & Deployment (CI/CD)
-
-Our project uses GitHub Actions for automated testing, security scanning, and deployment. The CI/CD pipeline runs on every push to `main` and on pull requests targeting `main`.
-
-### Pipeline Stages
-
-1. **Security Scanning**
-   - CodeQL analysis for JavaScript security vulnerabilities
-   - Trivy dependency scan for known vulnerabilities in project dependencies
-   - All security scans are configured to fail on critical and high severity issues
-
-2. **Install and Test**
-   - Node.js 22 setup with npm caching
-   - Dependency installation
-   - Linting checks
-   - Unit tests execution
-   - Application build
-
-3. **Docker Build and Push** (main branch only)
-   - Builds Docker image using Docker Buildx
-   - Pushes to Docker Hub with two tags:
-     - Latest commit SHA
-     - `latest` tag
-
-4. **Container Security Scan** (main branch only)
-   - Trivy container scan of the built Docker image
-   - Checks for OS and library vulnerabilities
-   - Fails on critical and high severity issues
-
-### Required Secrets
-The following secrets need to be configured in your GitHub repository:
-- `DOCKERHUB_USERNAME`: Your Docker Hub username
-- `DOCKERHUB_TOKEN`: Your Docker Hub access token
-
-### Pipeline Triggers
-- **Pull Requests to main**: Runs security scans, tests, and linting
-- **Push to main**: Runs full pipeline including Docker build, push, and container scan
+### Docker Compose Build
+```bash
+docker build --build-arg VITE_API_BASE_URL=<compose-url> -t sarnenduhexa/f1-fe:compose-latest .
+```
 
 ---
 

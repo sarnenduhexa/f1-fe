@@ -72,6 +72,15 @@ jobs:
     needs: [security, install-and-test]
     runs-on: ubuntu-latest
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    strategy:
+      matrix:
+        build:
+          - name: production
+            api_url: ${{ secrets.PROD_API_URL }}
+            tags: ${{ env.DOCKER_IMAGE }}:${{ env.DOCKER_TAG }},${{ env.DOCKER_IMAGE }}:latest
+          - name: compose
+            api_url: ${{ secrets.COMPOSE_API_URL }}
+            tags: ${{ env.DOCKER_IMAGE }}:compose-latest
     steps:
       - uses: actions/checkout@v4
       
@@ -90,13 +99,18 @@ jobs:
           context: .
           push: true
           platforms: linux/amd64
-          tags: ${{ env.DOCKER_IMAGE }}:${{ env.DOCKER_TAG }},${{ env.DOCKER_IMAGE }}:latest
+          build-args: |
+            VITE_API_BASE_URL=${{ matrix.build.api_url }}
+          tags: ${{ matrix.build.tags }}
 
   trivy-container:
     name: Container Vulnerability Scan
     needs: docker
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        tag: ['${{ env.DOCKER_TAG }}', 'compose-latest']
     
     steps:
     - name: Checkout code
@@ -105,7 +119,7 @@ jobs:
     - name: Run Trivy vulnerability scanner
       uses: aquasecurity/trivy-action@0.30.0
       with:
-        image-ref: ${{ env.DOCKER_IMAGE }}:${{ env.DOCKER_TAG }}
+        image-ref: ${{ env.DOCKER_IMAGE }}:${{ matrix.tag }}
         format: 'table'
         exit-code: '1'
         ignore-unfixed: true
