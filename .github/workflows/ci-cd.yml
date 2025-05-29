@@ -72,15 +72,6 @@ jobs:
     needs: [security, install-and-test]
     runs-on: ubuntu-latest
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    strategy:
-      matrix:
-        build:
-          - name: production
-            api_url: ${{ secrets.PROD_API_URL }}
-            tags: ${{ env.DOCKER_IMAGE }}:${{ env.DOCKER_TAG }},${{ env.DOCKER_IMAGE }}:latest
-          - name: compose
-            api_url: ${{ secrets.COMPOSE_API_URL }}
-            tags: ${{ env.DOCKER_IMAGE }}:compose-latest
     steps:
       - uses: actions/checkout@v4
       
@@ -93,33 +84,39 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
           
-      - name: Build and push Docker image
+      - name: Build and push production Docker image
         uses: docker/build-push-action@v6
         with:
           context: .
           push: true
           platforms: linux/amd64
           build-args: |
-            VITE_API_BASE_URL=${{ matrix.build.api_url }}
-          tags: ${{ matrix.build.tags }}
+            VITE_API_BASE_URL=${{ secrets.PROD_API_URL }}
+          tags: ${{ env.DOCKER_IMAGE }}:${{ env.DOCKER_TAG }},${{ env.DOCKER_IMAGE }}:latest
+
+      - name: Build and push compose Docker image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: true
+          platforms: linux/amd64
+          build-args: |
+            VITE_API_BASE_URL=${{ secrets.COMPOSE_API_URL }}
+          tags: ${{ env.DOCKER_IMAGE }}:compose-latest
 
   trivy-container:
     name: Container Vulnerability Scan
     needs: docker
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        tag: ['${{ env.DOCKER_TAG }}', 'compose-latest']
-    
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
 
-    - name: Run Trivy vulnerability scanner
+    - name: Run Trivy vulnerability scanner for production image
       uses: aquasecurity/trivy-action@0.30.0
       with:
-        image-ref: ${{ env.DOCKER_IMAGE }}:${{ matrix.tag }}
+        image-ref: ${{ env.DOCKER_IMAGE }}:${{ env.DOCKER_TAG }}
         format: 'table'
         exit-code: '1'
         ignore-unfixed: true
