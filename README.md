@@ -58,6 +58,7 @@ The GitHub Actions workflow includes:
 2. Installation and testing
 3. Docker image builds for both environments
 4. Container vulnerability scanning
+5. Automatic deployment to Render using webhook
 
 ### Required Secrets
 
@@ -67,6 +68,7 @@ The following secrets need to be configured in GitHub:
 - `DOCKERHUB_TOKEN` - DockerHub access token
 - `PROD_API_URL` - Production API URL
 - `COMPOSE_API_URL` - Docker Compose environment API URL
+- `RENDER_DEPLOY_HOOK_URL` - Render webhook URL for automatic deployments
 
 ## Local Development
 
