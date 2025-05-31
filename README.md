@@ -4,6 +4,14 @@ A modern, accessible, and responsive Formula 1 dashboard built with React, TypeS
 
 ---
 
+## Live demo
+
+You can find a live demo here -> https://f1-fe-latest.onrender.com/
+
+This is deployed to the free tire of render, So it can take up to a minute to spin up after and idle state.
+
+---
+
 ## Features
 - List of F1 World Champions (2005–present)
 - Click a season to view all grand prix winners for that year
