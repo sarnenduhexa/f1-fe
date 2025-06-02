@@ -37,9 +37,11 @@ const RaceCard = ({ race, isChampionWin }: RaceCardProps) => {
       <div className="flex items-center text-gray-200 flex-wrap relative z-10">
         <span data-testid={`winner-${race.round}`}>
           <span className="font-semibold mr-1">Winner:</span>
-          <span className="font-medium text-white">
+          {winnerDriver ? (<span className="font-medium text-white">
             {winnerDriver?.givenName} {winnerDriver?.familyName}
-          </span>
+          </span>) : (<span className="font-medium text-white">
+            Could not fetch winner data
+          </span>)}
         </span>
         {winnerDriver?.nationality && (
           <span className="text-gray-400 text-xs ml-1">({winnerDriver?.nationality})</span>

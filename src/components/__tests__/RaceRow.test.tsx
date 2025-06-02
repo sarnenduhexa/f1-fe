@@ -124,7 +124,8 @@ describe('RaceRow', () => {
         </tbody>
       </table>
     );
-    
+
+    expect(screen.getByText('Could not fetch winner data')).toBeInTheDocument();
     expect(screen.queryByText('(Bio)')).not.toBeInTheDocument();
     expect(screen.queryByText('(Dutch)')).not.toBeInTheDocument();
   });
