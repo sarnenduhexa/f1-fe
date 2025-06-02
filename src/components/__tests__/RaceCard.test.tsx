@@ -82,8 +82,8 @@ describe('RaceCard', () => {
     };
     
     render(<RaceCard race={raceWithoutDriver} isChampionWin={false} />);
-    
     expect(screen.getByText(/Winner:/)).toBeInTheDocument();
+    expect(screen.getByText('Could not fetch winner data')).toBeInTheDocument();
     expect(screen.queryByText('(Bio)')).not.toBeInTheDocument();
   });
 }); 

@@ -48,10 +48,12 @@ const RaceRow = ({ race, isChampionWin }: RaceRowProps) => {
       <td className="px-6 py-4 whitespace-nowrap text-sm flex items-center flex-col">
         
         <div className='text-md uppercase'>
-          <div
+          {winnerDriver ? (<div
             className='flex items-center justify-center gap-2 flex-row text-shadow-md tracking-wide'
           >{isChampionWin && <FaTrophy className="text-f1-yellow text-lg mr-2" aria-label="Season Champion won this race" />}
-          {winnerDriver?.givenName} {winnerDriver?.familyName}</div>
+          {winnerDriver?.givenName} {winnerDriver?.familyName}</div>) : (<div
+            className='flex items-center justify-center gap-2 flex-row text-shadow-md tracking-wide'
+          >Could not fetch winner data</div>)}
         </div>
 
         <div className='gap-1 inline-flex mt-1'>
